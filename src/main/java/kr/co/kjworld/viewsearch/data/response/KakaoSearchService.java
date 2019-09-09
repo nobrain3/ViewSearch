@@ -10,8 +10,8 @@ import retrofit2.http.Query;
 
 public interface KakaoSearchService {
     @GET("/v2/search/blog")
-    Single<BlogData> getBlogData(@Header("Authorization") String auth, @Query("query") String query, @Query("sort") String sort, @Query("page") int page, @Query("size") int size);
+    Single<KakaoData> getBlogData(@Header("Authorization") String auth, @Query("query") String query, @Query("sort") String sort, @Query("page") int page, @Query("size") int size);
 
     @GET("/v2/search/cafe")
-    Single<CafeData> getCafeData(@Header("Authorization") String auth, @Query("query") String query, @Query("sort") String sort, @Query("page") int page, @Query("size") int size);
+    Single<KakaoData> getCafeData(@Header("Authorization") String auth, @Query("query") String query, @Query("sort") String sort, @Query("page") int page, @Query("size") int size);
 }

@@ -5,4 +5,9 @@
         <item>Blog</item>
         <item>Cafe</item>
     </string-array>
+
+    <string-array name="sort_dialog">
+        <item>Title</item>
+        <item>DateTime</item>
+    </string-array>
 </resources>

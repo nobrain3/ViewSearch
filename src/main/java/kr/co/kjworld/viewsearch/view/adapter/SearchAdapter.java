@@ -10,28 +10,40 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import kr.co.kjworld.viewsearch.R;
-import kr.co.kjworld.viewsearch.data.response.data.BlogData;
-import kr.co.kjworld.viewsearch.data.response.data.CafeData;
 import kr.co.kjworld.viewsearch.data.response.data.Document;
 import kr.co.kjworld.viewsearch.data.response.data.KakaoData;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchViewHolder> {
-    private final String LABEL_CAFE = "Cafe";
-    private final String LABEL_BLOG = "Blog";
+    public final static int ALL = 0;
+    public final static int BLOG = 1;
+    public final static int CAFE = 2;
+
+    public final static String LABEL_CAFE = "Cafe";
+    public final static String LABEL_BLOG = "Blog";
+
+    public final static int SORT_TITLE = 0;
+    public final static int SORT_DATETIME = 1;
 
     List<Document> mSearcList;
     Context mContext;
+
+    int mLabelType;
+    int mSortType;
 
     public SearchAdapter(Context context, ArrayList<Document> list)
     {
         mContext = context;
         mSearcList = list;
     }
+
     @NonNull
     @Override
     public SearchAdapter.SearchViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -42,15 +54,72 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
     @Override
     public int getItemCount() {
-        return mSearcList.size();
+        int size = 0;
+        int fullSize = mSearcList.size();
+
+        switch (mLabelType)
+        {
+            case BLOG:
+            case CAFE:
+                Document temp;
+                for(int i = 0; i < fullSize; i ++)
+                {
+                    temp = mSearcList.get(i);
+                    if (mLabelType == BLOG)
+                    {
+                        if (temp.isCafe == false)
+                            size++;
+                    } else {
+                        if (temp.isCafe == true)
+                            size++;
+                    }
+                }
+                break;
+
+            case ALL:
+            default:
+                size = fullSize;
+                break;
+
+        }
+        return size;
     }
 
     @Override
     public void onBindViewHolder(@NonNull SearchAdapter.SearchViewHolder holder, int position) {
-        Document data = mSearcList.get(position);
+        Document temp;
+
+        int itemIndex = 0;
+        int fullSize = mSearcList.size();
+
+        Document data = null;
+        if (mLabelType == ALL)
+        {
+            data = mSearcList.get(position);
+        }
+
+        for (int i = 0; i < fullSize; i++)
+        {
+            temp = mSearcList.get(i);
+            if (mLabelType == BLOG && temp.isCafe == false)
+            {
+                if (position == itemIndex) {
+                    data = temp;
+                    break;
+                }
+                itemIndex++;
+            } else if (mLabelType == CAFE && temp.isCafe == true){
+                if (position == itemIndex) {
+                    data = temp;
+                    break;
+                }
+
+                itemIndex++;
+            }
+        }
 
         holder.mLabelView.setText(data.label);
-        holder.mNameView.setText(data.cafename);
+        holder.mNameView.setText(data.name);
         holder.mTitleView.setText(data.title);
         holder.mDateTimeView.setText(data.datetime);
 
@@ -59,7 +128,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                 .into(holder.mThumbnailView);
     }
 
-    public void updateBlogData(BlogData data)
+    public void updateBlogData(KakaoData data)
     {
         for (Document document : data.documents)
         {
@@ -68,14 +137,14 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
             newDocument.isCafe = false;
             newDocument.label = LABEL_BLOG;
             newDocument.datetime = document.datetime;
-            newDocument.cafename = document.cafename;
+            newDocument.name = document.name;
             newDocument.title = document.title;
             mSearcList.add(newDocument);
         }
         notifyDataSetChanged();
     }
 
-    public void updateCafeData(CafeData data)
+    public void updateCafeData(KakaoData data)
     {
         for (Document document : data.documents)
         {
@@ -84,10 +153,28 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
             newDocument.isCafe = true;
             newDocument.label = LABEL_CAFE;
             newDocument.datetime = document.datetime;
-            newDocument.cafename = document.cafename;
+            newDocument.name = document.name;
             newDocument.title = document.title;
             mSearcList.add(newDocument);
         }
+        notifyDataSetChanged();
+    }
+
+    public void setType(int type) {
+        mLabelType = type;
+    }
+
+    public void sort(int type) {
+        mSortType = type;
+        Collections.sort(mSearcList, new Comparator<Document>() {
+            @Override
+            public int compare(Document document, Document document2) {
+                if (mSortType == SORT_TITLE)
+                    return document.title.compareTo(document2.title);
+                else
+                    return document2.datetime.compareTo(document.datetime);
+            }
+        });
         notifyDataSetChanged();
     }
 
@@ -107,6 +194,5 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
             mThumbnailView = itemView.findViewById(R.id.cardview_thumbnail);
 
         }
-
     }
 }

@@ -1,22 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <include
         layout="@layout/toolbar_main"
         android:id="@+id/toolbar"/>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        >
 
         <Spinner
+            android:id="@+id/filter_spinner"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.8"
-            android:entries="@array/filter_spinner"/>
+            android:entries="@array/filter_spinner" />
 
         <ImageButton
+            android:id="@+id/sort_button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.2"
@@ -27,8 +35,9 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_listview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </LinearLayout>

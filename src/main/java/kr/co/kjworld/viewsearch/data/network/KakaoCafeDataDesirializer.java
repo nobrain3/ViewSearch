@@ -27,7 +27,7 @@ public class KakaoCafeDataDesirializer implements JsonDeserializer<CafeData> {
         {
             Document document = new Document();
             JsonObject ownerJsonObject = documentArray.get(i).getAsJsonObject();
-            document.cafename = ownerJsonObject.get("cafename").getAsString();
+            document.name = ownerJsonObject.get("cafename").getAsString();
             document.thumbnail = ownerJsonObject.get("thumbnail").getAsString();
             document.datetime = ownerJsonObject.get("datetime").getAsString();
             document.title = ownerJsonObject.get("title").getAsString();
